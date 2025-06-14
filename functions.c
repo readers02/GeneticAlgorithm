@@ -117,12 +117,21 @@ void crossover(int POPULATION_SIZE, int NUM_VARIABLES, double fitness[POPULATION
 void mutate(int POPULATION_SIZE, int NUM_VARIABLES, double new_population[POPULATION_SIZE][NUM_VARIABLES], double population[POPULATION_SIZE][NUM_VARIABLES], double Lbound[NUM_VARIABLES], double Ubound[NUM_VARIABLES], double mutate_rate) {
     int total_genes = POPULATION_SIZE * NUM_VARIABLES;
     int num_genes_to_mutate = (int)(total_genes * mutate_rate);
-    int *genes_to_mutate_indices = (int *)malloc(num_genes_to_mutate * sizeof(int));
+    int *genes_to_mutate_indices = (int *)malloc(total_genes * sizeof(int));
 
-    for (int i = 0; i < num_genes_to_mutate; i++) {
-        genes_to_mutate_indices[i] = generate_int(0, total_genes - 1);
+    for (int i = 0; i < total_genes; i++) {
+        genes_to_mutate_indices[i] = i;
     }
 
+    //Fisher-yates shuffle to randomize
+    for (int i = total_genes -1; i > 0; i--){
+        int j = generate_int(0,i);
+        int temp = genes_to_mutate_indices[i];
+        genes_to_mutate_indices[i] = genes_to_mutate_indices[j];
+        genes_to_mutate_indices [j] = temp;
+    }
+
+    //Mutate the first k (num_genes_to_mutate) genes in the randomized list
     for (int i = 0; i < num_genes_to_mutate; i++) {
         int index = genes_to_mutate_indices[i];
         int row = index / NUM_VARIABLES;
